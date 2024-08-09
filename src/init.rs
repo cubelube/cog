@@ -28,6 +28,8 @@ pub fn init_repo(force: bool) -> Result<()>
         if force
         {
             cog_init(cog_path, true)?;
+            println!("Cog reinitialized");
+            return Ok(())
         }
         else
         {
