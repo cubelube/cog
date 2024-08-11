@@ -1,5 +1,10 @@
+use std::io::Result;
+use std::path::Path;
+
 use clap::{Parser, Subcommand};
 
+mod add;
+mod commit;
 mod init;
 
 #[derive(Parser)]
@@ -18,9 +23,21 @@ enum Commands
         #[arg(short, long)]
         force: bool,
     },
+
+    /// Stage files for committing
+    Add {
+        filename: String,
+    },
+
+    /// Commit changes
+    Commit {
+        /// Commit message
+        #[arg(short, long)]
+        message: String,
+    }
 }
 
-fn main()
+fn main() -> Result<()>
 {
     let args = Args::parse();
 
@@ -30,16 +47,39 @@ fn main()
         {
             if *force
             {
-                init::init_repo(true).unwrap();
+                init::init_repo(true)?;
             }
             else
             {
-                init::init_repo(false).unwrap();    
+                init::init_repo(false)?;    
             }
+
+            return Ok(())
+        },
+
+        Some(Commands::Add { filename }) =>
+        {
+            let obj_path = Path::new(".cog/objects");
+
+            if obj_path.exists()
+            {
+                add::add_file(&filename)?;
+                return Ok(())
+            }
+            println!("Object path does not exist! Most likely you haven't initialized a Cog repo yet. Try running cog init to get started :)");
+
+            return Ok(())
+        },
+
+        Some(Commands::Commit { message }) =>
+        {
+            todo!()
         }
         _ =>
         {
-            println!("Not init");
+            println!("Not a valid command! Try running cog -h");
+
+            return Ok(())
         }
     }
 }

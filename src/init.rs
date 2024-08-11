@@ -15,6 +15,7 @@ fn cog_init(cog_path: &Path, remove: bool) -> Result<()>
 
     fs::create_dir(cog_path)?;
     fs::create_dir(cog_path.join("revs"))?;
+    fs::create_dir(cog_path.join("objects"))?;
 
     Ok(())
 }
